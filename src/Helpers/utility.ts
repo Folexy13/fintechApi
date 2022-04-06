@@ -1,5 +1,12 @@
 import { FnResponseDataType } from './types';
 
+export const handleResponse = (res: any, statusCode: number, status: boolean, message: string, data?: any) => {
+	return res.status(statusCode).json({
+		status,
+		message,
+		data,
+	});
+};
 
 export const successResponse = (res: any, message: string = 'Operation successfull', data?: any) => {
 	return res.status(200).json({

@@ -27,7 +27,20 @@ var dotenv = __importStar(require("dotenv"));
 dotenv.config();
 var getConfig = function () {
     return {
-        PORT: Number(process.env.PORT)
+        PORT: Number(process.env.PORT),
+        DBPORT: Number(process.env.DBPORT),
+        DBNAME: String(process.env.DBNAME),
+        DBHOST: String(process.env.DBHOST),
+        DBUSERNAME: String(process.env.DBUSERNAME),
+        DBPASSWORD: String(process.env.DBPASSWORD),
+        DBDIALECT: 'mysql',
+        OPERATORALIASES: false,
+        POOL: {
+            max: 5,
+            min: 0,
+            acquire: 30000,
+            idle: 100000,
+        }
     };
 };
 var getSanitizedConfig = function (config) {

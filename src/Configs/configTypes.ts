@@ -1,4 +1,4 @@
-import { Dialect } from 'sequelize'
+import { Dialect,OperatorsAliases,Op } from 'sequelize'
 import * as dotenv from 'dotenv'
 dotenv.config();
 
@@ -9,7 +9,14 @@ type Config = {
     DBHOST: string,
     DBUSERNAME: string,
     DBPASSWORD: string,
-    DBDIALECT:Dialect
+    DBDIALECT:Dialect,
+    OPERATORALIASES: Boolean;
+    POOL: {
+        max: number
+        min:number
+        acquire: number,
+        idle:number
+    }
     
 };
 
@@ -23,6 +30,13 @@ const getConfig= (): Config => {
         DBUSERNAME: String(process.env.DBUSERNAME),
         DBPASSWORD: String(process.env.DBPASSWORD),
         DBDIALECT: 'mysql',
+        OPERATORALIASES: false,
+         POOL: {
+        max: 5,
+        min:0,
+        acquire: 30000,
+        idle:100000,
+    }
     }
 }
 

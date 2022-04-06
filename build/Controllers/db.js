@@ -39,47 +39,48 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.register = void 0;
-var express_validator_1 = require("express-validator");
-var bcryptjs_1 = __importDefault(require("bcryptjs"));
-var utility_1 = require("../Helpers/utility");
-var DB = require('../Models');
-var User = DB.users;
-var register = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var errors, _a, firstName, lastName, phone, email, password, _b, walletbalance, salt, hashedPwd, insertData, isExist, user, error_1;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0:
-                errors = (0, express_validator_1.validationResult)(req);
-                if (!errors.isEmpty()) {
-                    return [2 /*return*/, (0, utility_1.errorResponse)(res, 'Validation Error', errors.array())];
-                }
-                _a = req.body, firstName = _a.firstName, lastName = _a.lastName, phone = _a.phone, email = _a.email, password = _a.password, _b = _a.walletbalance, walletbalance = _b === void 0 ? 0.00 : _b;
-                return [4 /*yield*/, bcryptjs_1.default.genSalt(15)];
-            case 1:
-                salt = _c.sent();
-                return [4 /*yield*/, bcryptjs_1.default.hash(password, salt)];
-            case 2:
-                hashedPwd = _c.sent();
-                insertData = { firstName: firstName, lastName: lastName, phone: phone, email: email, walletbalance: walletbalance, password: hashedPwd };
-                _c.label = 3;
-            case 3:
-                _c.trys.push([3, 6, , 7]);
-                return [4 /*yield*/, User.findOne({ where: { email: email }, attributes: { exclude: ['createdAt', 'updatedAt'] } })];
-            case 4:
-                isExist = _c.sent();
-                if (isExist)
-                    return [2 /*return*/, (0, utility_1.handleResponse)(res, 400, false, "User with email ".concat(email, " already exists"))];
-                return [4 /*yield*/, User.create(insertData)];
-            case 5:
-                user = _c.sent();
-                console.log(user);
-                return [2 /*return*/, res.json(user)];
-            case 6:
-                error_1 = _c.sent();
-                return [2 /*return*/, (0, utility_1.handleResponse)(res, 401, false, "An error occured - ".concat(error_1))];
-            case 7: return [2 /*return*/];
-        }
-    });
-}); };
-exports.register = register;
+var sequelize_1 = require("sequelize");
+//Import config file
+var configTypes_1 = __importDefault(require("../Configs/configTypes"));
+//Initizalizing and tweaking db 
+var db = {};
+var sequelize = new sequelize_1.Sequelize(configTypes_1.default.DBNAME, configTypes_1.default.DBUSERNAME, configTypes_1.default.DBPASSWORD, {
+    host: configTypes_1.default.DBHOST,
+    port: configTypes_1.default.DBPORT,
+    dialect: configTypes_1.default.DBDIALECT,
+    logging: false
+    // logging: (...msg) => console.log(msg)
+});
+db.Op = sequelize_1.Op;
+//load models
+// fs.readdirSync(__dirname + '/../Models/')
+//     .filter(function (file) {
+//         return file.indexOf('.') !== 0 && file !== 'index.js'
+//     })
+//     .forEach(async function (file) {
+//         var model = require(path.join(__dirname + '/../Models', file));
+//         db[model.name] = model;
+//         console.log(__dirname + '/../Models')
+//     });
+//     Object.keys(db).forEach(function (modelName) {
+//         if ('associate' in db[modelName]) {
+//             db[modelName].associate(db);
+//         };
+//     })
+//Synchronizing DB
+//Exports
+db.Sequelize = sequelize_1.Sequelize;
+db.sequelize = sequelize;
+db.users = require('../Models/User.ts')(sequelize, sequelize_1.DataTypes);
+db.sequelize
+    .sync({ force: false })
+    .then(function () {
+    return __awaiter(this, void 0, void 0, function () { return __generator(this, function (_a) {
+        console.info('Connection to Database was successful');
+        return [2 /*return*/];
+    }); });
+})
+    .catch(function (err) {
+    console.error(err, 'Something went wrong with the Database Update!');
+});
+module.exports = db;

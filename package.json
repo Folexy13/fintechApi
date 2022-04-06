@@ -12,8 +12,15 @@
     "type": "git",
     "url": "git+https://github.com/Folexy13/fintechApi.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "api",
+    "nodejs",
+    "typescript",
+    "payment gateway",
+    "sequelize",
+    "mysql"
+  ],
+  "author": "Aluko Opeyemi",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Folexy13/fintechApi/issues"
