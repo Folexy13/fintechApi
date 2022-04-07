@@ -1,16 +1,19 @@
-import { Dialect,OperatorsAliases,Op } from 'sequelize'
+import { Dialect,Op } from 'sequelize'
 import * as dotenv from 'dotenv'
+import { stringify } from 'querystring';
 dotenv.config();
 
 type Config = {
-    PORT: number,
-    DBPORT: number,
-    DBNAME: string,
-    DBHOST: string,
-    DBUSERNAME: string,
-    DBPASSWORD: string,
+    PORT: number;
+    DBPORT: number;
+    DBNAME: string;
+    DBHOST: string;
+    DBUSERNAME: string;
+    DBPASSWORD: string;
     DBDIALECT:Dialect,
-    OPERATORALIASES: Boolean;
+    TWILLIO_ACCOUNT_SID: string;
+	TWILLIO_AUTH_TOKEN: string;
+    TWILLIO_MESSAGE_SERVICE_ID: string,
     POOL: {
         max: number
         min:number
@@ -30,7 +33,9 @@ const getConfig= (): Config => {
         DBUSERNAME: String(process.env.DBUSERNAME),
         DBPASSWORD: String(process.env.DBPASSWORD),
         DBDIALECT: 'mysql',
-        OPERATORALIASES: false,
+        TWILLIO_ACCOUNT_SID: String(process.env.TWILLIO_ACCOUNT_SID),
+	    TWILLIO_AUTH_TOKEN: String(process.env.TWILLIO_AUTH_TOKEN),
+        TWILLIO_MESSAGE_SERVICE_ID:String(process.env.TWILLIO_MESSAGE_SERVICE_ID),
          POOL: {
         max: 5,
         min:0,

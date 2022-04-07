@@ -6,14 +6,11 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
 //Import Db and configs
-import config from '../Configs/configTypes';
+import config from '../Configs/configTypes';import DB from './db';
 
 //Destructured functions
 import { RegisterDataType } from "../Helpers/types";
 import { handleResponse,errorResponse } from "../Helpers/utility";
-
-const DB = require('../Models')
-const User =  DB.users
 
 export const register = async (req: Request, res: Response) => {
     const errors = validationResult(req)
@@ -29,12 +26,15 @@ export const register = async (req: Request, res: Response) => {
     let insertData: RegisterDataType = { firstName,lastName, phone, email,walletbalance, password: hashedPwd };
 
     try {
-        const isExist: any = await User.findOne({ where: { email }, attributes: { exclude: ['createdAt', 'updatedAt'] } });
+        const isExist: any = await DB.users.findOne({ where: { email }, attributes: { exclude: ['createdAt', 'updatedAt'] } });
 
         if (isExist) return handleResponse(res, 400,false, `User with email ${email} already exists`);
-        const user: any = await User.create(insertData);
-        console.log(user)
-        return res.json(user)
+        const user: any = await DB.users.create(insertData);
+        if (user) {
+			return handleResponse(res, 200, true, `Registration successfull`);
+		} else {
+			return handleResponse(res, 401, false, `An error occured`);
+		}
     } catch (error) {
         return handleResponse(res, 401, false, `An error occured - ${error}`);
     }

@@ -2,7 +2,8 @@
 //*****     USERS TABLE     *****//
 export default function (sequelize: any, Sequelize: any) {
     var Users = sequelize.define(
-        'uspers', {
+        'users',
+        {
         firstName: {
             type: Sequelize.STRING,
             allowNull: false,
@@ -34,8 +35,8 @@ export default function (sequelize: any, Sequelize: any) {
         }
     );
     
-    // Users.associate = function (models: any) {
-    //     models.users.hasOne(models.userSettings, {onDelete:'cascade',targetKey:'id',foreignKey:'userId'})
-    // }
+    Users.associate = function (models: any) {
+        models.users.hasOne(models.userSettings, {onDelete:'cascade',targetKey:'id',foreignKey:'userId'})
+    }
     return Users
 };
