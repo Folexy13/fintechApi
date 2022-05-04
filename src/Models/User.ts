@@ -4,6 +4,11 @@ export default function (sequelize: any, Sequelize: any) {
     var Users = sequelize.define(
         'users',
         {
+        id: {
+                type: Sequelize.UUID,
+                primaryKey: true,
+                defaultValue: Sequelize.UUIDV4,
+        },
         firstName: {
             type: Sequelize.STRING,
             allowNull: false,
@@ -27,7 +32,12 @@ export default function (sequelize: any, Sequelize: any) {
             unique: true,
         },
         gender: {
-            type: Sequelize.ENUM('MALE', 'FEMALE')
+            type: Sequelize.STRING,
+            allowNull: false,
+        },
+        status: {
+            type: Sequelize.ENUM('active', 'inactive'),
+            defaultValue: 'inactive',
         },
     },
         {
@@ -36,7 +46,8 @@ export default function (sequelize: any, Sequelize: any) {
     );
     
     Users.associate = function (models: any) {
-        models.users.hasOne(models.userSettings, {onDelete:'cascade',targetKey:'id',foreignKey:'userId'})
+        models.users.hasOne(models.userSettings, { onDelete: 'cascade', targetKey: 'id', foreignKey: 'userId' });
+        models.users.hasMany(models.otp,{ onDelete: 'cascade', targetKey: 'id', foreignKey: 'userId'})
     }
     return Users
 };

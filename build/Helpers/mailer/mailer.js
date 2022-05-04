@@ -39,56 +39,67 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-//Imports
-var fs_1 = __importDefault(require("fs"));
-var path_1 = __importDefault(require("path"));
-var sequelize_1 = require("sequelize");
-//Import config file
-var configTypes_1 = __importDefault(require("../Configs/configTypes"));
-//Initizalizing and tweaking db 
-var db = {};
-var sequelize = new sequelize_1.Sequelize(configTypes_1.default.DBNAME, configTypes_1.default.DBUSERNAME, configTypes_1.default.DBPASSWORD, {
-    host: configTypes_1.default.DBHOST,
-    port: configTypes_1.default.DBPORT,
-    dialect: configTypes_1.default.DBDIALECT,
-    logging: false,
-    // logging: (...msg) => console.log(msg)
-});
-db.Op = sequelize_1.Op;
-// load models
-fs_1.default.readdirSync(__dirname + '/../Models/')
-    .filter(function (file) {
-    return file.indexOf('.') !== 0 && file !== 'index.js';
-})
-    .forEach(function (file) {
-    return __awaiter(this, void 0, void 0, function () {
-        var model;
-        return __generator(this, function (_a) {
-            model = sequelize.import(path_1.default.join(__dirname + '/../Models', file));
-            db[model.name] = model;
+exports.prepareMail = exports.sendMail = void 0;
+// Import packages
+var mail_1 = __importDefault(require("@sendgrid/mail"));
+// Import configs
+var configTypes_1 = __importDefault(require("../../Configs/configTypes"));
+var sendMail = function (_a) {
+    var senderName = _a.senderName, senderEmail = _a.senderEmail, mailRecipients = _a.mailRecipients, mailSubject = _a.mailSubject, mailBody = _a.mailBody;
+    return __awaiter(void 0, void 0, void 0, function () {
+        var msg;
+        return __generator(this, function (_b) {
+            try {
+                mail_1.default.setApiKey(configTypes_1.default.SENDGRID_API_KEY);
+                msg = {
+                    to: mailRecipients,
+                    from: "".concat(senderName, " <").concat(senderEmail, ">"),
+                    subject: mailSubject,
+                    html: mailBody,
+                };
+                mail_1.default.send(msg).then(function () { }, function (error) {
+                    console.error(error);
+                    return {
+                        status: false,
+                        message: "Email not sent ".concat(error),
+                    };
+                });
+                return [2 /*return*/, {
+                        status: true,
+                        message: 'Email sent successfully',
+                    }];
+            }
+            catch (error) {
+                console.log(error);
+                return [2 /*return*/, {
+                        status: false,
+                        message: "Email not sent ".concat(error),
+                        email: mailRecipients,
+                    }];
+            }
             return [2 /*return*/];
         });
     });
-});
-Object.keys(db).forEach(function (modelName) {
-    if ('associate' in db[modelName]) {
-        db[modelName].associate(db);
-    }
-    ;
-});
-//Synchronizing DB
-sequelize
-    .sync()
-    .then(function () {
-    return __awaiter(this, void 0, void 0, function () { return __generator(this, function (_a) {
-        console.info('connected to the database');
-        return [2 /*return*/];
-    }); });
-})
-    .catch(function (err) {
-    console.error(err, 'Something went wrong with the Database Update!');
-});
-//Exports
-db.Sequelize = sequelize_1.Sequelize;
-db.sequelize = sequelize;
-exports.default = db;
+};
+exports.sendMail = sendMail;
+var prepareMail = function (_a) {
+    var mailRecipients = _a.mailRecipients, mailSubject = _a.mailSubject, mailBody = _a.mailBody, senderName = _a.senderName, senderEmail = _a.senderEmail;
+    return __awaiter(void 0, void 0, void 0, function () {
+        var _sendMail;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, (0, exports.sendMail)({
+                        senderName: senderName,
+                        senderEmail: senderEmail,
+                        mailRecipients: mailRecipients,
+                        mailSubject: mailSubject,
+                        mailBody: mailBody,
+                    })];
+                case 1:
+                    _sendMail = _b.sent();
+                    return [2 /*return*/, { status: _sendMail.status, message: _sendMail.message }];
+            }
+        });
+    });
+};
+exports.prepareMail = prepareMail;

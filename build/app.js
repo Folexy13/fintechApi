@@ -9,6 +9,7 @@ var cors_1 = __importDefault(require("cors"));
 var morgan_1 = __importDefault(require("morgan"));
 var configTypes_1 = __importDefault(require("./Configs/configTypes"));
 var routes_1 = __importDefault(require("./routes"));
+var helmet_1 = __importDefault(require("helmet"));
 // Initialising app
 var app = (0, express_1.default)();
 // Middlewares
@@ -17,4 +18,5 @@ app.use(express_1.default.json());
 app.use((0, cors_1.default)({ origin: true }));
 // Server setup
 app.listen(configTypes_1.default.PORT, function () { return console.log("Server listening on port ".concat(configTypes_1.default.PORT)); });
+app.use((0, helmet_1.default)());
 app.use(routes_1.default);

@@ -12,7 +12,8 @@ const sequelize: any = new Sequelize(config.DBNAME, config.DBUSERNAME, config.DB
     host: config.DBHOST,
     port: config.DBPORT,
     dialect: config.DBDIALECT,
-    logging:false
+    logging:false,
+    
     // logging: (...msg) => console.log(msg)
 });
 
